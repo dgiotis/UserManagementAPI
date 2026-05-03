@@ -14,8 +14,13 @@ try
 
     var app = builder.Build();
 
-    // Register global exception handler middleware
+    // Register middleware in correct order (outermost to innermost):
+    // 1. Error Handling - catches all exceptions
+    // 2. Authentication - validates tokens
+    // 3. Logging - logs all requests/responses
     app.UseMiddleware<GlobalExceptionHandler>();
+    app.UseMiddleware<TokenValidationMiddleware>();
+    app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
     if (app.Environment.IsDevelopment())
     {
